@@ -128,7 +128,7 @@ try {
             Message           = "Successfully set primary emailaddress to [$($selectedmailaddress.EmailAddress)] for [$($mailbox.DisplayName)]." # required (free format text) 
             IsError           = $false # optional. Elastic reporting purposes only. (default = $false. $true = Executed action returned an error) 
             TargetDisplayName = $($mailbox.DisplayName) # optional (free format text) 
-            TargetIdentifier  = $([string]$mailBoxes.GUID) # optional (free format text) 
+            TargetIdentifier  = $([string]$mailbox.ExchangeGuid) # optional (free format text) 
         }
         #send result back  
         Write-Information -Tags "Audit" -MessageData $log    
