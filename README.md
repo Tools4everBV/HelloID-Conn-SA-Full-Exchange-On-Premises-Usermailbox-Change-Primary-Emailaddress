@@ -1,62 +1,84 @@
-<!-- Description -->
+# HelloID-Conn-SA-Full-Exchange-On-Premises-Usermailbox-Change-Primary-Emailaddress
+
+| :information_source: Information                                                                                                                                                                                                                                                                                                                                                          |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| This repository contains the connector and configuration code only. The implementer is responsible for acquiring the connection details such as username, password, certificate, etc. You might even need to sign a contract or agreement with the supplier before implementing this connector. Please contact the client's application manager to coordinate the connector requirements. |
+
 ## Description
-This HelloID Service Automation Delegated Form provides the functionality to Change the primary Email address of a mailbox. The following options are available:
- 1. Give a name to lookup a mailbox
- 2. The result will show you a list of mailboxes. You will need to select to correct one
- 3. Select from the existing emailaddresses a new primary Email Address. (The current Primary is marked isPrimary = True)
- 4. Update the primary EmailAddress
 
-## Versioning
-| Version | Description | Date |
-| - | - | - |
-| 1.0.2   | Added version number and updated code for SA-agent and auditlogging | 2022/08/24  |
-| 1.0.1   | Added version number and updated all-in-one script | 2021/11/16  |
-| 1.0.0   | Initial release | 2021/04/29  |
+_HelloID-Conn-SA-Full-Exchange-On-Premises-Usermailbox-Change-Primary-Emailaddress_ is a template designed for use with HelloID Service Automation (SA) Delegated Forms. It can be imported into HelloID and customized according to your requirements.
 
-<!-- TABLE OF CONTENTS -->
-## Table of Contents
-* [Description](#description)
-* [All-in-one PowerShell setup script](#all-in-one-powershell-setup-script)
-  * [Getting started](#getting-started)
-* [Post-setup configuration](#post-setup-configuration)
-* [Manual resources](#manual-resources)
+By using this delegated form, you can change the primary email address of Exchange On-Premises user mailboxes. The following workflow is available:
 
+1.  Search for a mailbox by entering a search value (wildcard search across Name, Alias, SamAccountName, or PrimarySmtpAddress)
+2.  Select the target mailbox from the search results
+3.  View all email addresses associated with the selected mailbox (primary address marked with IsPrimary = true)
+4.  Select the email address to set as the new primary address
+5.  Optionally enable the checkbox to update the Active Directory UserPrincipalName to match the new primary email address
+6.  The primary email address is updated in Exchange, and all proxy addresses are reconfigured accordingly
+7.  If selected, the UserPrincipalName is updated in Active Directory
 
-## All-in-one PowerShell setup script
-The PowerShell script "createform.ps1" contains a complete PowerShell script using the HelloID API to create the complete Form including user defined variables, tasks and data sources.
+## Getting started
 
- _Please note that this script asumes none of the required resources do exists within HelloID. The script does not contain versioning or source control_
+### Requirements
 
+- **Exchange On-Premises Access**:<br>
+  Remote PowerShell access to Exchange On-Premises server is required. The connection URI must be accessible from the HelloID Agent or service that executes the delegated form. Ensure the Exchange server is configured to allow remote PowerShell connections.
+- **Active Directory Access** (Optional):<br>
+  If using the UserPrincipalName update feature, the HelloID service account must have permissions to modify the UserPrincipalName attribute in Active Directory for the target user objects.
+- **Exchange Mailbox Permissions**:<br>
+  The service account must have sufficient Exchange permissions to read mailbox properties and modify email addresses. Typically requires Exchange Organization Management or Recipient Management role group membership.
 
-### Getting started
-Please follow the documentation steps on [HelloID Docs](https://docs.helloid.com/hc/en-us/articles/360017556559-Service-automation-GitHub-resources) in order to setup and run the All-in one Powershell Script in your own environment.
+### Connection settings
 
+The following user-defined variables are used by the connector.
 
-## Post-setup configuration
-After the all-in-one PowerShell script has run and created all the required resources. The following items need to be configured according to your own environment
- 1. Update the following [user defined variables](https://docs.helloid.com/hc/en-us/articles/360014169933-How-to-Create-and-Manage-User-Defined-Variables)
-<table>
-  <tr><td><strong>Variable name</strong></td><td><strong>Example value</strong></td><td><strong>Description</strong></td></tr>
-  <tr><td>ExchangeConnectionUri</td><td>http://ExchangeServer/powershell</td><td>Exchange server URI</td></tr>
-  <tr><td>ExchangeAdminUsername</td><td>domain/user</td><td>Exchange server admin account</td></tr>
-  <tr><td>ExchangeAdminPassword</td><td>********</td><td>Exchange server admin password</td></tr>
-  <tr><td>ExchangeSearchOU</td><td>Example.com/Users</td><td>Exchange server OrganizationalUnit to search</td></tr>
-</table>
+| Setting               | Description                                                                                                   | Mandatory |
+| --------------------- | ------------------------------------------------------------------------------------------------------------- | --------- |
+| ExchangeConnectionUri | The URI to the Exchange On-Premises PowerShell endpoint (e.g., http://exchangeserver.domain.local/powershell) | Yes       |
+| ExchangeAdminUsername | The username for Exchange administration (e.g., DOMAIN\username)                                              | Yes       |
+| ExchangeAdminPassword | The password for the Exchange admin account                                                                   | Yes       |
 
-## Manual resources
-This Delegated Form uses the following resources in order to run
+## Remarks
 
-#### Powershell data source '[powershell-datasource]_Exchange-mailbox-change-primary-address-get-mailbox'
-This Powershell data source runs a query to search for the mailbox.
+### Authentication Method
 
-#### Powershell data source '[powershell-datasource]_Exchange-mailbox-change-primary-address-get-emailaddresses.ps1'
-This Powershell data source runs a query to search for the emailaddresses of the selected mailbox.
+- The connector uses Default authentication when establishing the PowerShell session to Exchange. This typically uses Kerberos authentication in a domain environment. Ensure the HelloID service is running under an account that can authenticate to Exchange.
 
-#### Delegated form task '[task]_Exchange on-premise - Mailbox change primary address'
-This delegated form task wil create the room mailbox
+### UserPrincipalName Update
+
+- The optional UserPrincipalName update feature requires the Active Directory PowerShell module to be available on the system executing the task. This feature will attempt to update the UPN to match the newly selected primary email address.
+
+### Session Management
+
+- The connector explicitly imports only required Exchange cmdlets (Get-Mailbox, Set-Mailbox) to optimize session performance and reduce memory usage. The session is automatically cleaned up in a finally block to ensure proper disconnection even if errors occur.
+
+### Proxy Address Handling
+
+- When setting a new primary email address, the connector automatically converts the existing primary SMTP address to a secondary (smtp:) address and promotes the selected address to primary (SMTP:). All existing proxy addresses are preserved, and duplicates are prevented.
+
+### Search Flexibility
+
+- The mailbox search uses Exchange filter queries instead of OU-scoped searches, providing more flexibility. Users can search across Name, SamAccountName, Alias, and PrimarySmtpAddress fields using wildcard patterns.
+
+### Error Handling
+
+- All error messages include the script line number and context for easier troubleshooting. Audit logs are sent to HelloID for both successful operations and errors.
+
+## Development resources
+
+### API documentation
+
+- [Connect to Exchange servers using remote PowerShell](https://learn.microsoft.com/en-us/powershell/exchange/connect-to-exchange-servers-using-remote-powershell)
+- [Get-Mailbox cmdlet](https://learn.microsoft.com/en-us/powershell/module/exchange/get-mailbox)
+- [Set-Mailbox cmdlet](https://learn.microsoft.com/en-us/powershell/module/exchange/set-mailbox)
+- [Remove-PSSession cmdlet](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/remove-pssession)
 
 ## Getting help
-_If you need help, feel free to ask questions on our [forum](https://forum.helloid.com/forum/helloid-connectors/service-automation/249-helloid-sa-exchange-onpremises-change-primary-email-address)_
 
-## HelloID Docs
+> :bulb: **Tip:**  
+> _For more information on Delegated Forms, please refer to our [documentation](https://docs.helloid.com/en/service-automation/delegated-forms.html) pages_.
+
+## HelloID docs
+
 The official HelloID documentation can be found at: https://docs.helloid.com/

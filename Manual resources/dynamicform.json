@@ -1,115 +1,130 @@
 [
-    {
-        "label":  "Details",
-        "fields":  [
-                       {
-                           "key":  "searchMailbox",
-                           "templateOptions":  {
-                                                   "label":  "Search MailBox",
-                                                   "placeholder":  "",
-                                                   "required":  true
-                                               },
-                           "type":  "input",
-                           "summaryVisibility":  "Hide element",
-                           "requiresTemplateOptions":  true,
-                           "requiresKey":  true,
-                           "requiresDataSource":  false
-                       },
-                       {
-                           "key":  "gridMailbox",
-                           "templateOptions":  {
-                                                   "label":  "Mailbox",
-                                                   "required":  true,
-                                                   "grid":  {
-                                                                "columns":  [
-                                                                                {
-                                                                                    "headerName":  "Distinguished Name",
-                                                                                    "field":  "DistinguishedName"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Alias",
-                                                                                    "field":  "Alias"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Display Name",
-                                                                                    "field":  "displayName"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "User Principal Name",
-                                                                                    "field":  "UserPrincipalName"
-                                                                                }
-                                                                            ],
-                                                                "height":  300,
-                                                                "rowSelection":  "single"
-                                                            },
-                                                   "dataSourceConfig":  {
-                                                                            "dataSourceGuid":  "$dataSourceGuid_0",
-                                                                            "input":  {
-                                                                                          "propertyInputs":  [
-                                                                                                                 {
-                                                                                                                     "propertyName":  "searchMailbox",
-                                                                                                                     "otherFieldValue":  {
-                                                                                                                                             "otherFieldKey":  "searchMailbox"
-                                                                                                                                         }
-                                                                                                                 }
-                                                                                                             ]
-                                                                                      }
-                                                                        },
-                                                   "useDefault":  false
-                                               },
-                           "type":  "grid",
-                           "summaryVisibility":  "Show",
-                           "requiresTemplateOptions":  true,
-                           "requiresKey":  true,
-                           "requiresDataSource":  true
-                       }
-                   ]
-    },
-    {
-        "label":  "Set Primary Address",
-        "fields":  [
-                       {
-                           "key":  "grid",
-                           "templateOptions":  {
-                                                   "label":  "Primary Email Address selector",
-                                                   "required":  true,
-                                                   "grid":  {
-                                                                "columns":  [
-                                                                                {
-                                                                                    "headerName":  "Is Primary",
-                                                                                    "field":  "IsPrimary"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Email Address",
-                                                                                    "field":  "EmailAddress"
-                                                                                }
-                                                                            ],
-                                                                "height":  300,
-                                                                "rowSelection":  "single"
-                                                            },
-                                                   "dataSourceConfig":  {
-                                                                            "dataSourceGuid":  "$dataSourceGuid_1",
-                                                                            "input":  {
-                                                                                          "propertyInputs":  [
-                                                                                                                 {
-                                                                                                                     "propertyName":  "mailBox",
-                                                                                                                     "otherFieldValue":  {
-                                                                                                                                             "otherFieldKey":  "gridMailbox"
-                                                                                                                                         }
-                                                                                                                 }
-                                                                                                             ]
-                                                                                      }
-                                                                        },
-                                                   "useFilter":  true,
-                                                   "defaultSelectorProperty":  "IsPrimary",
-                                                   "useDefault":  true
-                                               },
-                           "type":  "grid",
-                           "summaryVisibility":  "Show",
-                           "requiresTemplateOptions":  true,
-                           "requiresKey":  true,
-                           "requiresDataSource":  true
-                       }
-                   ]
-    }
+  {
+    "label": "Select mailbox",
+    "fields": [
+      {
+        "key": "searchMailbox",
+        "templateOptions": {
+          "label": "Search MailBox",
+          "placeholder": "",
+          "required": true
+        },
+        "type": "input",
+        "summaryVisibility": "Hide element",
+        "requiresTemplateOptions": true,
+        "requiresKey": true,
+        "requiresDataSource": false
+      },
+      {
+        "key": "selectedmailbox",
+        "templateOptions": {
+          "label": "Select Mailbox",
+          "required": true,
+          "grid": {
+            "columns": [
+              {
+                "headerName": "Display Name",
+                "field": "DisplayName"
+              },
+              {
+                "headerName": "Primary Smtp Address",
+                "field": "PrimarySmtpAddress"
+              },
+              {
+                "headerName": "User Principal Name",
+                "field": "UserPrincipalName"
+              },
+              {
+                "headerName": "Hidden From Address Lists Enabled",
+                "field": "HiddenFromAddressListsEnabled"
+              }
+            ],
+            "height": 300,
+            "rowSelection": "single"
+          },
+          "dataSourceConfig": {
+            "dataSourceGuid": "$dataSourceGuid_0",
+            "input": {
+              "propertyInputs": [
+                {
+                  "propertyName": "searchValue",
+                  "otherFieldValue": {
+                    "otherFieldKey": "searchMailbox"
+                  }
+                }
+              ]
+            }
+          },
+          "useDefault": false,
+          "allowCsvDownload": true
+        },
+        "type": "grid",
+        "summaryVisibility": "Show",
+        "requiresTemplateOptions": true,
+        "requiresKey": true,
+        "requiresDataSource": true
+      }
+    ]
+  },
+  {
+    "label": "Update mailbox",
+    "fields": [
+      {
+        "key": "selectedmailaddres",
+        "templateOptions": {
+          "label": "Select primary emailaddress",
+          "required": true,
+          "grid": {
+            "columns": [
+              {
+                "headerName": "Is Primary",
+                "field": "IsPrimary"
+              },
+              {
+                "headerName": "Email Address",
+                "field": "EmailAddress"
+              }
+            ],
+            "height": 300,
+            "rowSelection": "single"
+          },
+          "dataSourceConfig": {
+            "dataSourceGuid": "$dataSourceGuid_1",
+            "input": {
+              "propertyInputs": [
+                {
+                  "propertyName": "selectedmailbox",
+                  "otherFieldValue": {
+                    "otherFieldKey": "selectedmailbox"
+                  }
+                }
+              ]
+            }
+          },
+          "useFilter": true,
+          "defaultSelectorProperty": "IsPrimary",
+          "useDefault": true,
+          "allowCsvDownload": true
+        },
+        "type": "grid",
+        "summaryVisibility": "Show",
+        "requiresTemplateOptions": true,
+        "requiresKey": true,
+        "requiresDataSource": true
+      },
+      {
+        "key": "blnsetupn",
+        "templateOptions": {
+          "label": "Set primary mailaddress as userprinciplename",
+          "useSwitch": true,
+          "checkboxLabel": "Yes"
+        },
+        "type": "boolean",
+        "summaryVisibility": "Show",
+        "requiresTemplateOptions": true,
+        "requiresKey": true,
+        "requiresDataSource": false
+      }
+    ]
+  }
 ]
