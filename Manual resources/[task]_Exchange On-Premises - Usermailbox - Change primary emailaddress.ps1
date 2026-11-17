@@ -1,7 +1,7 @@
 # Variables configured in form
 $mailbox = $form.selectedmailbox
 $selectedmailaddress = $form.selectedmailaddres
-$blnSetUpn = [System.Convert]::ToBoolean($form.blnsetupn)
+$blnSetUpn = if ([string]::IsNullOrWhiteSpace($form.blnsetupn)) { $false } else { [System.Convert]::ToBoolean($form.blnsetupn) }
 
 # Build proxy address with appropriate prefix based on whether it should be primary
 if ($selectedmailaddress.IsPrimary -eq 'false') {
